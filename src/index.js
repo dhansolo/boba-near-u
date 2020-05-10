@@ -2,19 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom'
 import axios from 'axios'
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 let lat;
 let long;
 let intro;
-let button;
 let results;
+let notFound;
+let loadingAnim;
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             data: null,
+            loading: false,
             displayIntro: true,
-            displayResults: false
+            displayResults: false,
+            displayNotFound: false
         }
         this.handleBobaClick = this.handleBobaClick.bind(this);
     }
@@ -32,7 +37,13 @@ class App extends React.Component {
                 document.getElementById('current-location').appendChild(el);
             },
             function(error) {
-                console.log("Please allow us to stalk you");
+                console.log("permission denied");
+                document.getElementById("intro").remove();
+                document.getElementById("boba-button").remove();
+                let el = document.createElement("p");
+                el.innerText = "Please allow location permissions for this app to work."
+                document.getElementById("root").appendChild(el);
+
             });
         } else {
             console.log("What'd you do bruh?");
@@ -40,6 +51,7 @@ class App extends React.Component {
     }
 
     handleBobaClick() {
+        this.setState({ loading: true });
         if(navigator.geolocation) {
             console.log("getting current location")
             navigator.geolocation.getCurrentPosition(
@@ -58,6 +70,8 @@ class App extends React.Component {
             function(error) {
                 console.log("Please allow us to stalk you");
             });
+        } else {
+            console.log("What'd you do bruh?");
         }
         if(lat && long) {
             intro = null;
@@ -85,9 +99,14 @@ class App extends React.Component {
                     this.setState({
                         data: response.data.businesses,
                         displayResults: true,
+                        loading: false
                     })
+                    loadingAnim = null;
                 } else {
-                    console.log("DAMN BRUH AINT NO BOBA AROUND YOU FOR 25 MILES")
+                    this.setState({
+                        displayNotFound: true,
+                        loading: false
+                    })
                 }
             })
             .catch((error)=> {
@@ -100,13 +119,17 @@ class App extends React.Component {
     render() {
         if(this.state.displayIntro) { intro = <IntroPage /> }
         if(this.state.displayResults) {  results = <DisplayNearest data={this.state.data}/>}
+        if(this.state.displayNotFound) { notFound = <NoBobaFoundPage />}
+        if(this.state.loading) { loadingAnim = <LoadAnimation />} else { loadingAnim = null }
         return (
             <div>
                 <h1>Boba Near U</h1>
                 <div id="current-location"></div>
                 {intro}
-                <button id="boba-button" onClick={this.handleBobaClick}>Find Boba!</button>
+                <button id="boba-button" onClick={this.handleBobaClick}>Find Me Boba!</button>
+                {loadingAnim}
                 {results}
+                {notFound}
             </div>
         )
     }
@@ -115,10 +138,19 @@ class App extends React.Component {
 class IntroPage extends React.Component {
     render() {
         return (
-            <div>
+            <div id="intro">
                 <p>This is an application that takes your current location, wherever you are in the world, and finds the nearest boba/bubbletea parlor relative to your locaton</p>
-                <p>If location permissions have not been enabled, you should have been greeted by an alert asking for permission</p>
-                <p>Please be sure to accept location permissions and click on the button below to begin</p>
+                <p>Please be sure to enable location permissions and click on the button below to begin</p>
+            </div>
+        )
+    }
+}
+
+class NoBobaFoundPage extends React.Component {
+    redner() {
+        return (
+            <div>
+                <p>No Boba/Bubbletea joints near you</p>
             </div>
         )
     }
@@ -128,7 +160,7 @@ class DisplayNearest extends React.Component {
     render() {
         let distance = (this.props.data[0].distance * 0.000621371)
         return (
-            <div>
+            <div id="results">
                 <h1>{this.props.data[0].name}</h1>
                 <p>{this.props.data[0].location.address1}</p>
                 <p>{this.props.data[0].location.city}, {this.props.data[0].location.state} {this.props.data[0].location.zip_code}</p>
@@ -142,7 +174,9 @@ class DisplayNearest extends React.Component {
 class LoadAnimation extends React.Component {
     render() {
         return (
-            <div></div>
+            <div>
+                <CircularProgress />
+            </div>
         )
     }
 }
