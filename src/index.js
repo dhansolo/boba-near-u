@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom'
 import axios from 'axios'
+import './index.css';
+import boba from './img/boba.png'
 
+import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 let lat;
@@ -26,23 +29,20 @@ class App extends React.Component {
 
     componentDidMount() {
         if(navigator.geolocation) {
-            console.log("getting current location")
+            // console.log("getting current location")
             navigator.geolocation.getCurrentPosition(
             function(position) {
                 lat = position.coords.latitude;
                 long = position.coords.longitude;
-                console.log("location acquired");
-                let el = document.createElement('p');
-                el.innerText = "Current Location: " + lat.toFixed(3) + ", " + long.toFixed(3);
-                document.getElementById('current-location').appendChild(el);
+                // console.log("location acquired");
+                document.getElementById('current-location').innerText = "Current Location: " + lat.toFixed(3) + ", " + long.toFixed(3);
+                document.getElementById('boba-button').style.display = "inline";
             },
             function(error) {
-                console.log("permission denied");
+                // console.log("permission denied");
                 document.getElementById("intro").remove();
                 document.getElementById("boba-button").remove();
-                let el = document.createElement("p");
-                el.innerText = "Please allow location permissions for this app to work."
-                document.getElementById("root").appendChild(el);
+                document.getElementById('current-location').innerText = "Please enable location permissions and refresh"
 
             });
         } else {
@@ -51,14 +51,15 @@ class App extends React.Component {
     }
 
     handleBobaClick() {
+        if(!lat || !long || this.state.loading) { return; }
         this.setState({ loading: true });
         if(navigator.geolocation) {
-            console.log("getting current location")
+            // console.log("getting current location")
             navigator.geolocation.getCurrentPosition(
             function(position) {
                 lat = position.coords.latitude;
                 long = position.coords.longitude;
-                console.log("location acquired");
+                // console.log("location acquired");
                 let current = document.getElementById('current-location');
                 while(current.firstChild) {
                     current.removeChild(current.lastChild);
@@ -68,7 +69,7 @@ class App extends React.Component {
                 document.getElementById('current-location').appendChild(el);
             },
             function(error) {
-                console.log("Please allow us to stalk you");
+                console.log(error);
             });
         } else {
             console.log("What'd you do bruh?");
@@ -101,6 +102,7 @@ class App extends React.Component {
                         displayResults: true,
                         loading: false
                     })
+                    console.log(this.state.data)
                     loadingAnim = null;
                 } else {
                     this.setState({
@@ -123,13 +125,20 @@ class App extends React.Component {
         if(this.state.loading) { loadingAnim = <LoadAnimation />} else { loadingAnim = null }
         return (
             <div>
-                <h1>Boba Near U</h1>
-                <div id="current-location"></div>
-                {intro}
-                <button id="boba-button" onClick={this.handleBobaClick}>Find Me Boba!</button>
-                {loadingAnim}
-                {results}
-                {notFound}
+                <Grid container justify="center">
+                    <div id="main">
+                        <h1>Boba Near U</h1>
+                        <div id="current-location">Current Location: Loading...</div>
+                        {intro}
+                        <button id="boba-button" onClick={this.handleBobaClick}>Find Me Boba!</button>
+                        {loadingAnim}
+                        {results}
+                        {notFound}
+                    </div>
+                </Grid>
+                <div id="boba-image">
+                    <img src={boba} height="250" width="250"></img>
+                </div>
             </div>
         )
     }
@@ -139,8 +148,8 @@ class IntroPage extends React.Component {
     render() {
         return (
             <div id="intro">
-                <p>This is an application that takes your current location, wherever you are in the world, and finds the nearest boba/bubbletea parlor relative to your locaton</p>
-                <p>Please be sure to enable location permissions and click on the button below to begin</p>
+                <p>This application that takes your current location and finds the nearest boba/bubbletea.</p>
+                <p>Please be sure to enable location permissions and click on the button below to begin.</p>
             </div>
         )
     }
@@ -165,7 +174,8 @@ class DisplayNearest extends React.Component {
                 <p>{this.props.data[0].location.address1}</p>
                 <p>{this.props.data[0].location.city}, {this.props.data[0].location.state} {this.props.data[0].location.zip_code}</p>
                 <p>{this.props.data[0].display_phone}</p>
-                {<p>{distance.toFixed(3)} miles away</p>}
+                <p>{distance.toFixed(3)} miles away</p>
+                <p><a href={this.props.data[0].url}>View on Yelp</a></p>
             </div>
         )
     }
@@ -174,7 +184,7 @@ class DisplayNearest extends React.Component {
 class LoadAnimation extends React.Component {
     render() {
         return (
-            <div>
+            <div id="loading">
                 <CircularProgress />
             </div>
         )
