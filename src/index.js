@@ -6,6 +6,7 @@ import boba from './img/boba.png'
 
 import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Divider from '@material-ui/core/Divider';
 
 let lat;
 let long;
@@ -59,14 +60,7 @@ class App extends React.Component {
             function(position) {
                 lat = position.coords.latitude;
                 long = position.coords.longitude;
-                // console.log("location acquired");
-                let current = document.getElementById('current-location');
-                while(current.firstChild) {
-                    current.removeChild(current.lastChild);
-                }
-                let el = document.createElement('p');
-                el.innerText = "Current Location: " + lat.toFixed(3) + ", " + long.toFixed(3);
-                document.getElementById('current-location').appendChild(el);
+                document.getElementById('current-location').innerText = "Current Location: " + lat.toFixed(3) + ", " + long.toFixed(3);
             },
             function(error) {
                 console.log(error);
@@ -78,6 +72,7 @@ class App extends React.Component {
             intro = null;
             results = null;
             document.getElementById('boba-button').innerText = "Refresh";
+            document.getElementById('boba-button').style.width = "100px";
             this.setState({ displayIntro: false, displayResults: false });
             axios({
                 "method":"GET",
@@ -91,7 +86,7 @@ class App extends React.Component {
                     "latitude": lat,
                     "longitude": long,
                     "sort_by":"distance",
-                    "limit": 50,
+                    "limit": 1,
                     "radius": 40000
                 }
             })
@@ -102,7 +97,7 @@ class App extends React.Component {
                         displayResults: true,
                         loading: false
                     })
-                    console.log(this.state.data)
+                    // console.log(this.state.data)
                     loadingAnim = null;
                 } else {
                     this.setState({
@@ -137,7 +132,7 @@ class App extends React.Component {
                     </div>
                 </Grid>
                 <div id="boba-image">
-                    <img src={boba} height="250" width="250"></img>
+                    <img alt="boba" src={boba} height="250" width="250"></img>
                 </div>
             </div>
         )
@@ -148,8 +143,8 @@ class IntroPage extends React.Component {
     render() {
         return (
             <div id="intro">
-                <p>This application that takes your current location and finds the nearest boba/bubbletea.</p>
-                <p>Please be sure to enable location permissions and click on the button below to begin.</p>
+                <p>This application that takes your current location and finds the nearest boba/bubbletea</p>
+                <p>Please be sure to enable location permissions and click on the button below to begin</p>
             </div>
         )
     }
@@ -171,11 +166,14 @@ class DisplayNearest extends React.Component {
         return (
             <div id="results">
                 <h1>{this.props.data[0].name}</h1>
-                <p>{this.props.data[0].location.address1}</p>
-                <p>{this.props.data[0].location.city}, {this.props.data[0].location.state} {this.props.data[0].location.zip_code}</p>
-                <p>{this.props.data[0].display_phone}</p>
+                <p>
+                    {this.props.data[0].location.address1}<br></br>
+                    {this.props.data[0].location.city}, {this.props.data[0].location.state} {this.props.data[0].location.zip_code}<br></br>
+                    {this.props.data[0].display_phone}<br></br>
+                </p>
                 <p>{distance.toFixed(3)} miles away</p>
                 <p><a href={this.props.data[0].url}>View on Yelp</a></p>
+                <Divider orientation="vertical" flexItem/>
             </div>
         )
     }

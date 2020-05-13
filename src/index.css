@@ -17,6 +17,12 @@ html {
 
 #boba-button {
     display: none;
+    height: 30px;
+    width: 150px;
+    border-radius: 10px;
+    font-family: "Jost", sans-serif;
+    font-size: 15px;
+    margin: 15px 0px 15px 0px;
 }
 
 #boba-image {
