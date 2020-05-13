@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/boba-near-u/static/css/main.c4cbd921.chunk.css",
+    "main.js": "/boba-near-u/static/js/main.02dcebc3.chunk.js",
+    "main.js.map": "/boba-near-u/static/js/main.02dcebc3.chunk.js.map",
+    "runtime-main.js": "/boba-near-u/static/js/runtime-main.3464148e.js",
+    "runtime-main.js.map": "/boba-near-u/static/js/runtime-main.3464148e.js.map",
+    "static/js/2.80dc0925.chunk.js": "/boba-near-u/static/js/2.80dc0925.chunk.js",
+    "static/js/2.80dc0925.chunk.js.map": "/boba-near-u/static/js/2.80dc0925.chunk.js.map",
+    "index.html": "/boba-near-u/index.html",
+    "precache-manifest.e2a8a9f89943c41c37e5d22d598f4773.js": "/boba-near-u/precache-manifest.e2a8a9f89943c41c37e5d22d598f4773.js",
+    "service-worker.js": "/boba-near-u/service-worker.js",
+    "static/css/main.c4cbd921.chunk.css.map": "/boba-near-u/static/css/main.c4cbd921.chunk.css.map",
+    "static/js/2.80dc0925.chunk.js.LICENSE.txt": "/boba-near-u/static/js/2.80dc0925.chunk.js.LICENSE.txt",
+    "static/media/boba.png": "/boba-near-u/static/media/boba.80c77471.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.3464148e.js",
+    "static/js/2.80dc0925.chunk.js",
+    "static/css/main.c4cbd921.chunk.css",
+    "static/js/main.02dcebc3.chunk.js"
+  ]
+}
